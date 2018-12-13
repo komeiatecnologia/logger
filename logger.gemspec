@@ -1,13 +1,6 @@
-begin
-  require_relative "lib/logger"
-rescue LoadError
-  # for Ruby core repository
-  require_relative "logger"
-end
-
 Gem::Specification.new do |spec|
   spec.name          = "logger"
-  spec.version       = Logger::VERSION
+  spec.version       = "1.3.1"
   spec.authors       = ["SHIBATA Hiroshi"]
   spec.email         = ["hsbt@ruby-lang.org"]
 
