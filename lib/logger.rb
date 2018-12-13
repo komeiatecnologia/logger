@@ -374,9 +374,9 @@ class Logger
   #
   # Create an instance.
   #
-  def initialize(logdev, shift_age = 0, shift_size = 1048576, level: DEBUG,
-                 progname: nil, formatter: nil, datetime_format: nil,
-                 shift_period_suffix: '%Y%m%d')
+  def initialize(logdev, shift_age = 0, shift_size = 1048576, level = DEBUG,
+                 progname = nil, formatter = nil, datetime_format = nil,
+                 shift_period_suffix = '%Y%m%d')
     self.level = level
     self.progname = progname
     @default_formatter = Formatter.new
@@ -479,7 +479,7 @@ class Logger
   # device exists, return +nil+.
   #
   def <<(msg)
-    @logdev&.write(msg)
+    @logdev.write(msg) unless @logdev.nil?
   end
 
   #
@@ -566,13 +566,13 @@ class Logger
   # Close the logging device.
   #
   def close
-    @logdev&.close
+    @logdev.close if @logdev
   end
 
 private
 
   # Severity label for logging (max 5 chars).
-  SEV_LABEL = %w(DEBUG INFO WARN ERROR FATAL ANY).each(&:freeze).freeze
+  SEV_LABEL = %w(DEBUG INFO WARN ERROR FATAL ANY)
 
   def format_severity(severity)
     SEV_LABEL[severity] || 'ANY'
@@ -585,7 +585,7 @@ private
 
   # Default formatter for log messages.
   class Formatter
-    Format = "%s, [%s#%d] %5s -- %s: %s\n".freeze
+    Format = "%s, [%s#%d] %5s -- %s: %s\n"
 
     attr_accessor :datetime_format
 
@@ -601,7 +601,7 @@ private
   private
 
     def format_datetime(time)
-      time.strftime(@datetime_format || "%Y-%m-%dT%H:%M:%S.%6N ".freeze)
+      time.strftime(@datetime_format || "%Y-%m-%dT%H:%M:%S.%6N ")
     end
 
     def msg2str(msg)
@@ -665,7 +665,7 @@ private
     attr_reader :filename
     include MonitorMixin
 
-    def initialize(log = nil, shift_age: nil, shift_size: nil, shift_period_suffix: nil)
+    def initialize(log = nil, shift_age = nil, shift_size = nil, shift_period_suffix = nil)
       @dev = @filename = @shift_age = @shift_size = @shift_period_suffix = nil
       mon_initialize
       set_dev(log)
